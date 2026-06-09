@@ -5,15 +5,7 @@ A top-k sparse autoencoder (SAE) decomposes the frozen patch features into an
 interpretable dictionary, which is then analyzed for class vs. spatial
 selectivity and compared across backbones (self-supervised / supervised /
 random).
-
-## Setup
-
-```bash
-# PyTorch (CUDA 12.1 build)
-pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu121
-pip install -r requirements.txt
-```
-
+ 
 ## Data
 
 - **MixedWM38** (38,015 wafer bin maps, 52×52): place `MixedWM38.npz` in
