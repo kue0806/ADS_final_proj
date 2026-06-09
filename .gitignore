@@ -1,0 +1,34 @@
+# ---- large data & artifacts (do NOT commit) ----
+data/
+outputs/
+*.npz
+*.npy
+*.pt
+*.ckpt
+
+# ---- document / presentation generation scripts (not research code) ----
+scripts/_docs_gen/
+
+# ---- generated documents (deliverables, kept out of the code repo) ----
+docs/*.docx
+docs/*.pptx
+docs/*.pdf
+docs/*.doc
+docs/*.svg
+docs/assets/
+docs/*.Zone.Identifier
+*:Zone.Identifier
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ---- os / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

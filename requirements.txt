@@ -1,0 +1,15 @@
+# Core dependencies for: Sparse Autoencoder Analysis of DINOv2 on Wafer Bin Maps
+#
+# PyTorch is pinned to a CUDA 12.1 build. Install it from the official index:
+#   pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/cu121
+# then `pip install -r requirements.txt` for the rest.
+
+torch==2.4.1
+torchvision==0.19.1
+transformers==4.57.6
+numpy>=2.0
+scikit-learn>=1.4
+matplotlib>=3.8
+pillow>=10.0
+gdown>=5.0          # CIFAR-10 / MixedWM38 download helpers
+pyyaml>=6.0

@@ -1,0 +1,69 @@
+# Default experiment config — SAE × WBM × DINOv3
+# (Phase 0 scaffolding; values revisited per phase)
+
+backbone:
+  # Try DINOv3 first; fall back to DINOv2 if gated access not yet approved.
+  primary: facebook/dinov3-vitb16-pretrain-lvd1689m  # gated=manual
+  fallback: facebook/dinov2-base                      # public
+  layer: -2          # which transformer block to extract from (mid-to-late)
+  device: cuda
+  dtype: float32     # SAE is sensitive to dtype; keep fp32 for now
+
+data:
+  dataset: MixedWM38
+  raw_path: data/raw/MixedWM38.npz
+  # MixedWM38: arr_0 = (N, 52, 52) categorical {0=blank, 1=pass, 2=fail}
+  #           arr_1 = (N, 8) one-hot multi-label (defect types C2-C9)
+  native_h: 52
+  native_w: 52
+  num_classes: 38     # 1 normal + 8 single + 29 mixed
+  num_basic: 8        # for multi-label scoring
+  splits:
+    train: 0.7
+    val: 0.15
+    test: 0.15
+    seed: 42
+
+preprocess:
+  # Stage that converts the categorical 52x52 grid into a backbone-ready tensor.
+  # Choice of upsample matters; this is an analysis axis (E2-related ablation).
+  target_hw: 224                # DINOv2-base / DINOv3 ViT-B/16 expects 224
+  upsample: bilinear            # bilinear | nearest | none-tiled (later ablation)
+  channel_mode: replicate3      # replicate3 | colormap | onehot3
+  normalize: imagenet           # standard ImageNet mean/std
+
+sae:
+  # Top-k SAE, our own minimal implementation (avoids sae-lens dep drift).
+  variant: top_k
+  feature_dim: null             # inferred from backbone (e.g., 768 for ViT-B)
+  dict_size_mult: 16            # dictionary size = mult * feature_dim
+  top_k: 32                     # k for top-k SAE
+  l2_aux: 1.0e-4                # small L2 on dictionary
+  train:
+    batch_size: 1024            # patch-token batch (not image batch)
+    lr: 3.0e-4
+    steps: 30000
+    warmup: 1000
+    ema: 0.9999
+    val_every: 1000
+    seed: 0
+
+eval:
+  ms_score:
+    enabled: true
+    bins: 64
+  defect_alignment:
+    enabled: true
+    metrics: [iou, mi]
+  classifier:
+    head: linear                # linear | mlp1
+    multilabel: true
+    ks_few_shot: [5, 25, 100]
+
+seeds: [0, 1, 2]               # >= 3 seeds for mean +/- std reporting
+
+io:
+  outputs: outputs
+  ckpt_dir: outputs/sae_ckpts
+  fig_dir: outputs/figures
+  log_dir: outputs/logs
